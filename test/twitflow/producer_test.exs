@@ -25,4 +25,13 @@ defmodule TwitFlow.ProducerTest do
       assert {:producer, [:bla, :bla, :bla]} = init([1, 2, 3])
     end
   end
+
+  describe "handle_demand/2" do
+    test "Extract N number of elements from a list as defined in the numberic demand" do
+      fake_stream = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+      demand = 3
+
+      assert {:noreply, [:bla, :bla, :bla], ^fake_stream} = handle_demand(demand, fake_stream)
+    end
+  end
 end

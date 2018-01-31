@@ -28,6 +28,20 @@ defmodule TwitFlow.Producer do
     {:producer, stream}
   end
 
+  @doc """
+  Callback that receives a numberic demand, takes N element from the twitter
+  stream and broadcast those N number of tweets for the consumers.
+  """
+  @spec handle_demand(number(), Stream.t()) :: {:noreply, List.t(), Stream.t()}
+  def handle_demand(demand, stream) when demand > 0 do
+    tweets =
+      stream
+      |> Stream.drop(demand)
+      |> Enum.take(demand)
+
+    {:noreply, tweets, stream}
+  end
+
   defp twitter_handler() do
     Application.fetch_env!(:twit_flow, :twitter_handler)
   end
