@@ -18,6 +18,10 @@ defmodule TwitFlowTest do
 
     assert [true, pid] = application
 
-    Process.exit(pid, :normal)
+    pid
+    |> case do
+      nil -> nil
+      pid -> Process.exit(pid, :normal)
+    end
   end
 end
