@@ -1,18 +1,19 @@
 defmodule TwitFlow do
   @moduledoc """
-  Documentation for TwitFlow.
+  TwitFlow application responsible for logging tweets matching a specific keyword.
   """
+  use Application
 
   @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> TwitFlow.hello
-      :world
-
+  Start the application TwitFlow.
   """
-  def hello do
-    :world
+  @spec start(any(), any()) :: {:ok, pid()} | {:error, any()}
+  def start(_type, _args) do
+    import Supervisor.Spec
+
+    children = []
+
+    opts = [strategy: :rest_for_one, name: ApplicationSupervisor]
+    Supervisor.start_link(children, opts)
   end
 end

@@ -2,7 +2,7 @@ defmodule TwitFlowTest do
   use ExUnit.Case
   doctest TwitFlow
 
-  test "greets the world" do
-    assert TwitFlow.hello() == :world
+  test "start/2" do
+    assert {:ok, _pid} = TwitFlow.start([], [])
   end
 end
