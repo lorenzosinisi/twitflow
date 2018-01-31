@@ -21,7 +21,14 @@ defmodule TwitFlow.Producer do
   Start fetching the streaming api of twitter as genstage and set the stream in the state.
   """
   @spec init(List.t()) :: {:producer, Stream.t()} | {:producer, List.t()}
-  def init(default_tweets) do
-    {:producer, default_tweets}
+  def init(_default_tweets) do
+    handler = twitter_handler()
+    {:ok, stream} = handler.stream(:sample, min_demand: 0, max_demand: 100)
+
+    {:producer, stream}
+  end
+
+  defp twitter_handler() do
+    Application.fetch_env!(:twit_flow, :twitter_handler)
   end
 end
