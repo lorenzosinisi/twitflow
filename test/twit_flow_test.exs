@@ -3,6 +3,21 @@ defmodule TwitFlowTest do
   doctest TwitFlow
 
   test "start/2" do
-    assert {:ok, _pid} = TwitFlow.start([], [])
+    application =
+      TwitFlow.start([], [])
+      |> case do
+        {:ok, pid} ->
+          [true, pid]
+
+        {:error, {:already_started, pid}} ->
+          [true, pid]
+
+        _ ->
+          false
+      end
+
+    assert [true, pid] = application
+
+    Process.exit(pid, :normal)
   end
 end
