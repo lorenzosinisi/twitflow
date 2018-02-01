@@ -30,5 +30,5 @@ defmodule TwitFlow do
     Supervisor.start_link(children, opts)
   end
 
-  defp monitornig_hashtag(), do: System.get_env("MONITOR_HASHTAG") || "#startup"
+  defp monitornig_hashtag(), do: System.get_env("MONITOR_HASHTAG") || "startup"
 end
