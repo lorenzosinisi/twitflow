@@ -57,7 +57,9 @@ mix run --no-halt
 ## TODO
 
   [] - tests
+
   [] - decouple the twitter stream and connection from the Producer
+
   [] - check if it makes sense to have the stream as GenServer and continuously sending messages to the Producer mailbox
 
 
