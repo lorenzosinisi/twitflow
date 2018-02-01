@@ -16,6 +16,11 @@ defmodule TwitFlow do
         TwitFlow.ProducerSupervisor,
         [],
         id: :producer
+      ),
+      supervisor(
+        TwitFlow.ConsumerSupervisor,
+        ["BitcoinPipeline", "bitcoin", 1],
+        id: :consumer
       )
     ]
 
