@@ -22,7 +22,7 @@ use Mix.Config
 config :twit_flow, twitter_handler: Twittex
 
 config :twittex,
-  consumer_key: "z9RkVmbPV8EKuc1VxW24nWvxa",
+  consumer_key: "z9RkVmbPVEKuc1VxW24nWvxa",
   consumer_secret: "rmz3IW0Rz4kXstYfhTigcYwdC4kX1B3Rkf3MgqH0XZED8TY8OQ",
   token: "17754959-fSGB2oaE4OGhKqk9MqrGqrRZagm4mYCGelV5fitCc",
   token_secret: "GvOwH9nzCXUpN9hkGGLK3ADmdFsN2tji3UxBZktgJB98N"
