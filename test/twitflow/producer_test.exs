@@ -3,7 +3,7 @@ defmodule TwitFlow.ProducerTest do
   import TwitFlow.Producer
 
   defmodule FakeTwittex do
-    def stream(_, _) do
+    def stream() do
       {:ok, [:bla, :bla, :bla]}
     end
   end
@@ -31,7 +31,8 @@ defmodule TwitFlow.ProducerTest do
       fake_stream = [1, 2, 3, 4, 5, 6, 7, 8, 9]
       demand = 3
 
-      assert {:noreply, [:bla, :bla, :bla], ^fake_stream} = handle_demand(demand, fake_stream)
+      assert {:noreply, tweets, ^fake_stream} = handle_demand(demand, fake_stream)
+      assert Enum.count(tweets) == 3
     end
   end
 end

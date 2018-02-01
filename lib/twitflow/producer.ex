@@ -22,8 +22,7 @@ defmodule TwitFlow.Producer do
   """
   @spec init(List.t()) :: {:producer, Stream.t()} | {:producer, List.t()}
   def init(_default_tweets) do
-    handler = twitter_handler()
-    {:ok, stream} = handler.stream(:sample, min_demand: 0, max_demand: 100)
+    {:ok, stream} = twitter_handler().stream()
 
     {:producer, stream}
   end
@@ -34,10 +33,7 @@ defmodule TwitFlow.Producer do
   """
   @spec handle_demand(number(), Stream.t()) :: {:noreply, List.t(), Stream.t()}
   def handle_demand(demand, stream) when demand > 0 do
-    tweets =
-      stream
-      |> Stream.drop(demand)
-      |> Enum.take(demand)
+    tweets = stream |> Enum.take(demand)
 
     {:noreply, tweets, stream}
   end
