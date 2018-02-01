@@ -2,6 +2,16 @@ defmodule TwitFlow.Consumer do
   use GenStage
   require Logger
 
+  @moduledoc """
+  This implements a GenStage as consumer and subscribes to a producer.
+  It expects the events being a list of maps with the key "text".
+
+  It prints each value of the key text of the event to console using the Logger.
+  """
+
+  @doc """
+  Consumer part of the supervision tree.
+  """
   def start_link(pipeline_name, delay, max_demand) do
     process_name = Enum.join([pipeline_name, "Consumer"], "")
 
@@ -12,6 +22,7 @@ defmodule TwitFlow.Consumer do
     )
   end
 
+  @doc false
   def init([pipeline_name, delay, max_demand]) do
     producer = Enum.join([pipeline_name, "ProducerConsumer"], "")
 

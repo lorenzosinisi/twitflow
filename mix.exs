@@ -7,7 +7,11 @@ defmodule TwitFlow.MixProject do
       version: "0.1.0",
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      # Docs
+      name: "TwitFlow",
+      # The main page in the docs
+      docs: [main: "TwitFlow", extras: ["README.md"]]
     ]
   end
 
@@ -23,7 +27,8 @@ defmodule TwitFlow.MixProject do
   defp deps do
     [
       {:gen_stage, "~> 0.12"},
-      {:twittex, "~> 0.3"}
+      {:twittex, "~> 0.3"},
+      {:ex_doc, "~> 0.16", only: :dev, runtime: false}
     ]
   end
 end

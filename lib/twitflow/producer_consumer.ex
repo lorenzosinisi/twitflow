@@ -1,5 +1,6 @@
 defmodule TwitFlow.ProducerConsumer do
   use GenStage
+  require Logger
 
   @moduledoc """
   Subscribes to the Producer, get the messages and discards the ones that are not relevant.
@@ -35,6 +36,8 @@ defmodule TwitFlow.ProducerConsumer do
           {:producer_consumer, String.t(),
            subscribe_to: [{atom(), min_demand: number(), max_demand: number()}]}
   def init([hashtag, max_demand, producer]) do
+    Logger.info("Start monitoring tweets about #{hashtag}")
+
     {:producer_consumer, hashtag,
      subscribe_to: [{producer, min_demand: 0, max_demand: max_demand}]}
   end

@@ -8,8 +8,10 @@ defmodule TwitFlow do
   Start the application TwitFlow.
   """
   @spec start(any(), any()) :: {:ok, pid()} | {:error, any()}
-  def start(_type, args) do
+  def start(_type, _args) do
     import Supervisor.Spec
+
+    hashtag = monitornig_hashtag()
 
     children = [
       supervisor(
@@ -19,7 +21,7 @@ defmodule TwitFlow do
       ),
       supervisor(
         TwitFlow.ConsumerSupervisor,
-        ["BitcoinPipeline", "a", 1, TwitFlow.Producer],
+        ["Pipeline", hashtag, 1, TwitFlow.Producer],
         id: :consumer
       )
     ]
@@ -27,4 +29,6 @@ defmodule TwitFlow do
     opts = [strategy: :rest_for_one, name: ApplicationSupervisor]
     Supervisor.start_link(children, opts)
   end
+
+  defp monitornig_hashtag(), do: System.get_env("MONITOR_HASHTAG") || "#startup"
 end
