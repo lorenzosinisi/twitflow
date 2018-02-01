@@ -8,7 +8,7 @@ defmodule TwitFlow do
   Start the application TwitFlow.
   """
   @spec start(any(), any()) :: {:ok, pid()} | {:error, any()}
-  def start(_type, _args) do
+  def start(_type, args) do
     import Supervisor.Spec
 
     children = [
@@ -19,7 +19,7 @@ defmodule TwitFlow do
       ),
       supervisor(
         TwitFlow.ConsumerSupervisor,
-        ["BitcoinPipeline", "bitcoin", 1, TwitFlow.Producer],
+        ["BitcoinPipeline", "a", 1, TwitFlow.Producer],
         id: :consumer
       )
     ]
