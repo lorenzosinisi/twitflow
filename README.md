@@ -11,7 +11,7 @@ A is only a producer (and therefore a source) B is both producer and consumer
 C is only a consumer (and therefore a sink)
 
 
-The producer (A) connects to the Twitter Stream API and read in all tweets sending them to the producer-consumer (B). The producer-consumer (B) will check if the word 'startup' appears in the tweet. If yes, it will send it to the consumer ( C ). The sink ( C ) will then log the tweet with a timestamp to the console.
+The producer (A) connects to the Twitter Stream API and read in all tweets sending them to the producer-consumer (B). The producer-consumer (B) will check if the hashtag appears in the tweet. If yes, it will send it to the consumer ( C ). The sink ( C ) will then log the tweet with a timestamp to the console.
 
 ## Requirements
 
