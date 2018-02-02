@@ -40,8 +40,8 @@ defmodule TwitFlow.Consumer do
     {:noreply, [], [pipeline_name, delay]}
   end
 
-  defp print(%{"text" => text}) do
-    Logger.info(text)
+  defp print(%{"text" => text, "timestamp_ms" => timestamp_ms}) do
+    Logger.info("#{timestamp_ms} -> #{text}")
   end
 
   defp print(_), do: nil

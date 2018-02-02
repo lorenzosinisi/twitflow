@@ -27,7 +27,7 @@ defmodule TwitFlow.Producer do
   @spec init(List.t()) :: {:producer, Stream.t()} | {:producer, List.t()}
   def init(default_tweets) do
     schedule_streaming()
-    {:producer, default_tweets}
+    {:producer, {:queue.new(), 0}}
   end
 
   @doc """
@@ -35,10 +35,9 @@ defmodule TwitFlow.Producer do
   stream and broadcast those N number of tweets for the consumers.
   """
   @spec handle_demand(number(), Stream.t()) :: {:noreply, List.t(), Stream.t()}
-  def handle_demand(demand, stream) when demand > 0 do
-    tweets = stream |> Enum.take(demand)
-
-    {:noreply, tweets, stream}
+  def handle_demand(demand, {queue, pending_demand}) when demand > 0 do
+    {reversed_tweets, state} = take_tweets(queue, pending_demand + demand, [])
+    {:noreply, Enum.reverse(reversed_tweets), state}
   end
 
   @doc """
@@ -48,7 +47,7 @@ defmodule TwitFlow.Producer do
   This function wraps the dangerous call to Twitter in a try catch and handles
   the bad connections waiting for 1 second each time.
   """
-  def handle_cast(:start_streaming, state) do
+  def handle_cast(:start_streaming, {queue, pending_demand}) do
     streaming =
       try do
         twitter_handler().stream()
@@ -59,20 +58,44 @@ defmodule TwitFlow.Producer do
 
     case streaming do
       {:ok, stream} ->
-        Logger.info("Start streaming the Twitter APIs.")
-        {:noreply, [], stream}
+        parent = self()
+
+        spawn_link(fn ->
+          Stream.map(stream, fn tweet ->
+            tweet = %{"text" => tweet["text"], "timestamp_ms" => tweet["timestamp_ms"]}
+            GenServer.call(parent, {:enqueue_tweets, tweet})
+          end)
+          |> Stream.run()
+        end)
+
+        {:noreply, [], {queue, pending_demand}}
 
       _otherwise ->
         self()
         |> Process.send_after(:restart_streaming, 50)
 
-        {:noreply, [], state}
+        {:noreply, [], {queue, pending_demand}}
     end
   end
 
-  def handle_info(:restart_streaming, state) do
+  def handle_info(:restart_streaming, {queue, pending_demand}) do
     GenServer.cast(self(), :start_streaming)
-    {:noreply, [], state}
+    {:noreply, [], {queue, pending_demand}}
+  end
+
+  def handle_call({:enqueue_tweets, tweet}, _from, {queue, pending_demand}) do
+    queue = :queue.in(tweet, queue)
+    {reversed_jobs, state} = take_tweets(queue, pending_demand, [])
+    {:reply, :ok, Enum.reverse(reversed_jobs), state}
+  end
+
+  defp take_tweets(queue, 0, tweets), do: {tweets, {queue, 0}}
+
+  defp take_tweets(queue, n, tweets) when n > 0 do
+    case :queue.out(queue) do
+      {:empty, ^queue} -> {tweets, {queue, n}}
+      {{:value, tweet}, queue} -> take_tweets(queue, n - 1, [tweet | tweets])
+    end
   end
 
   defp schedule_streaming() do

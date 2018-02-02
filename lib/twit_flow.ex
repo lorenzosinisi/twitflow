@@ -21,7 +21,7 @@ defmodule TwitFlow do
       ),
       supervisor(
         TwitFlow.ConsumerSupervisor,
-        ["Pipeline", hashtag, 1, TwitFlow.Producer],
+        ["Pipeline", hashtag, 10, TwitFlow.Producer],
         id: :consumer
       )
     ]
