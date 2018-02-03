@@ -15,6 +15,9 @@ C is only a consumer (and therefore a sink)
 
 The producer (A) connects to the Twitter Stream API and read in all tweets sending them to the producer-consumer (B). The producer-consumer (B) will check if the hashtag appears in the tweet. If yes, it will send it to the consumer ( C ). The sink ( C ) will then log the tweet with a timestamp to the console.
 
+The producer (A) receives messages from a continuous stream from Twitter and adds the tweets
+to a `:queue`. When handling the demand from the consumers, it will pick tweets out of the queue and dispatch them.
+
 ## Requirements
 
 `Elxir ~> 1.5`
@@ -58,17 +61,14 @@ mix run --no-halt
 
 ## TODO
 
-  [] - tests
-
-  [] - decouple the twitter stream and connection from the Producer
-
-  [] - check if it makes sense to have the stream as GenServer and continuously sending messages to the Producer mailbox
-
+  - tests
+  - tests
+  - simplify the producer logic
 
 ## Nice things, issues and possible problems
 
-1. The connection between the twitter API and the producer is not ideal, it should happen asynchronously
-2. The producer is coupled with the Twitter API stream and this could be avoided in different ways, however, in this experiment the intention was to demonstrate how producers, producer consumers and consumers can interact with each other. So the focus was spent there.
-3. The application may crash reaching the maximum rate of restarts for some of the workers. This may be solved either isolating even more the workers and the points of failure, increasing the maximum number of restarts or using some other strategy in production.
-4. The Twittex library pushes back-pressure at the TCP level
-5. The design of the supervision tree has to be adapted after some learning on the specific domain
+1. The producer is coupled with the Twitter API stream and this could be avoided in different ways, however, in this experiment the intention was to demonstrate how producers, producer consumers and consumers can interact with each other. So the focus was spent there.
+2. The application may crash reaching the maximum rate of restarts for some of the workers, like the producer. This may be solved either isolating even more the workers and the points of failure or increasing the maximum number of restarts or using some other strategy in production.
+3. Fun fact, the Twittex library pushes back-pressure at the TCP level
+4. The design of the supervision tree has to be adapted after some learning on the specific domain
+5. Given that now all tweets are added to a :queue, there is a risk that the queue could get too big. This may be avoided adding more consumers as the queue grows.
