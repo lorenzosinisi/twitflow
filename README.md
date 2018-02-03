@@ -54,8 +54,28 @@ By default, the application will filter only tweets that include the word 'start
 Example:
 
 ```
-export MONITOR_HASHTAG=bitcoin
+export MONITOR_HASHTAG=love
 mix run --no-halt
+
+13:07:00.774 [info]  Start monitoring tweets about love
+
+13:07:07.913 [info]  RT @lovely_zinampan: nakakainis yung teacher na nanghuhula lang ng ibibigay na grade sa estudyante
+
+tangin*🙊😞
+
+13:07:10.934 [info]  RT @loveloiniee: Hala paktay nagbisaya na hahahahahaha
+
+WansaGelliInABottle BukasNa https://t.co/krwFcUoDIO
+
+13:07:20.888 [info]  RT @PreetBharara: Some people hate this president BECAUSE they love this country https://t.co/B03e3mXKTz
+
+13:07:22.901 [info]  RT @razalfaro: words cannot describe how beautiful you are.
+
+I love you to death Meng..❤️
+@mainedcm
+#MaineForRejoice https://t.co/YgYSobzL…
+
+13:07:28.931 [info]  RT @Bestloveporn: https://t.co/JV8b74p0w1
 
 ```
 
