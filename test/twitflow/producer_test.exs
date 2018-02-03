@@ -4,6 +4,8 @@ defmodule TwitFlow.ProducerTest do
 
   @moduletag capture_log: true
 
+  @tweet %{"text" => "blabla"}
+
   defmodule FakeTwittex do
     def stream() do
       {:ok, [%{"text" => "blabla"}]}
@@ -45,10 +47,18 @@ defmodule TwitFlow.ProducerTest do
       demand = 3
       pending_demand = 0
 
-      assert {:noreply, tweets, {^fake_queue, pending_demand}} =
-               handle_demand(demand, {fake_queue, pending_demand})
+      assert {:noreply, [], {{[], []}, 3}} = handle_demand(demand, {fake_queue, pending_demand})
+    end
 
-      assert Enum.count(tweets) == 0
+    test "Extract 1 element when the pending demand is 1" do
+      queue = :queue.new()
+      queue = :queue.in(@tweet, queue)
+      queue = :queue.in(@tweet, queue)
+      demand = 3
+      pending_demand = 1
+
+      assert {:noreply, [%{"text" => "blabla"}, %{"text" => "blabla"}], {{[], []}, 2}} =
+               handle_demand(demand, {queue, pending_demand})
     end
   end
 
