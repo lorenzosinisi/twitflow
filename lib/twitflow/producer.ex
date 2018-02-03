@@ -8,6 +8,12 @@ defmodule TwitFlow.Producer do
 
   The connection with Twitter happens asyncronously and if it fails, the server will
   try to reconnect for indefinitely.
+
+  When the stream is successfully started it will create a new process, sending messages from the stream to
+  the current process using the function handle_cast({:enqueue_tweets, tweet}, {queue, pending_demand}).
+
+  This will add new tweets to the queue and pick a number of them to be dispatched based on the
+  pending demand.
   """
 
   ##########
