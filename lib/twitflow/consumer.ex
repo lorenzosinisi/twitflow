@@ -41,7 +41,7 @@ defmodule TwitFlow.Consumer do
   end
 
   defp print(%{"text" => text, "timestamp_ms" => timestamp_ms}) do
-    Logger.info("#{timestamp_ms} -> #{text}")
+    Logger.info("#{text}")
   end
 
   defp print(_), do: nil

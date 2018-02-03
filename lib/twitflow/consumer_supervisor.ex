@@ -12,7 +12,7 @@ defmodule TwitFlow.ConsumerSupervisor do
   def init([pipeline_name, word, demand, producer]) do
     children = [
       worker(TwitFlow.ProducerConsumer, [pipeline_name, word, demand, producer]),
-      worker(TwitFlow.Consumer, [pipeline_name, 1000, demand])
+      worker(TwitFlow.Consumer, [pipeline_name, 0, demand])
     ]
 
     opts = [strategy: :one_for_one, name: pipeline_name]

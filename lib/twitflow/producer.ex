@@ -34,7 +34,6 @@ defmodule TwitFlow.Producer do
   Callback that receives a numberic demand, takes N element from the twitter
   stream and broadcast those N number of tweets for the consumers.
   """
-  @spec handle_demand(number(), Stream.t()) :: {:noreply, List.t(), Stream.t()}
   def handle_demand(demand, {queue, pending_demand}) when demand > 0 do
     {reversed_tweets, state} = take_tweets(queue, pending_demand + demand, [])
     {:noreply, Enum.reverse(reversed_tweets), state}
@@ -63,7 +62,7 @@ defmodule TwitFlow.Producer do
         spawn_link(fn ->
           Stream.map(stream, fn tweet ->
             tweet = %{"text" => tweet["text"], "timestamp_ms" => tweet["timestamp_ms"]}
-            GenServer.call(parent, {:enqueue_tweets, tweet})
+            GenServer.cast(parent, {:enqueue_tweets, tweet})
           end)
           |> Stream.run()
         end)
@@ -83,10 +82,10 @@ defmodule TwitFlow.Producer do
     {:noreply, [], {queue, pending_demand}}
   end
 
-  def handle_call({:enqueue_tweets, tweet}, _from, {queue, pending_demand}) do
+  def handle_cast({:enqueue_tweets, tweet}, {queue, pending_demand}) do
     queue = :queue.in(tweet, queue)
     {reversed_jobs, state} = take_tweets(queue, pending_demand, [])
-    {:reply, :ok, Enum.reverse(reversed_jobs), state}
+    {:noreply, Enum.reverse(reversed_jobs), state}
   end
 
   defp take_tweets(queue, 0, tweets), do: {tweets, {queue, 0}}

@@ -6,7 +6,7 @@ defmodule TwitFlow.ProducerTest do
 
   defmodule FakeTwittex do
     def stream() do
-      {:ok, [:bla, :bla, :bla]}
+      {:ok, [%{"text" => "blabla"}]}
     end
   end
 
@@ -29,8 +29,8 @@ defmodule TwitFlow.ProducerTest do
       :ok
     end
 
-    test "it should set the default state" do
-      assert {:producer, [1, 2, 3]} = init([1, 2, 3])
+    test "it should set the default state as new queue and remaining demand 0" do
+      {:producer, {{[], []}, 0}} = init([1, 2, 3])
     end
 
     test "it should send a message to itself with `:start_streaming`" do
@@ -41,11 +41,14 @@ defmodule TwitFlow.ProducerTest do
 
   describe "handle_demand/2" do
     test "Extract N number of elements from a list as defined in the numberic demand" do
-      fake_stream = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+      fake_queue = :queue.new()
       demand = 3
+      pending_demand = 0
 
-      assert {:noreply, tweets, ^fake_stream} = handle_demand(demand, fake_stream)
-      assert Enum.count(tweets) == 3
+      assert {:noreply, tweets, {^fake_queue, pending_demand}} =
+               handle_demand(demand, {fake_queue, pending_demand})
+
+      assert Enum.count(tweets) == 0
     end
   end
 
@@ -62,8 +65,8 @@ defmodule TwitFlow.ProducerTest do
     end
 
     test "sets the stream in the state" do
-      call = handle_cast(:start_streaming, [])
-      assert {:noreply, [], [:bla, :bla, :bla]} = call
+      call = handle_cast(:start_streaming, {:queue.new(), 0})
+      assert {:noreply, [], {{[], []}, 0}} = call
     end
   end
 
@@ -72,8 +75,8 @@ defmodule TwitFlow.ProducerTest do
       old_handler = Application.fetch_env!(:twit_flow, :twitter_handler)
       Application.put_env(:twit_flow, :twitter_handler, FakeTwittexError)
 
-      call = handle_cast(:start_streaming, [])
-      assert {:noreply, [], []} = call
+      call = handle_cast(:start_streaming, {:queue.new(), 0})
+      assert {:noreply, [], {{[], []}, 0}} = call
       assert_receive :restart_streaming
       Application.put_env(:twit_flow, :twitter_handler, old_handler)
     end
